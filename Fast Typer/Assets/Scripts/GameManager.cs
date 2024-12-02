@@ -2,30 +2,33 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] WordListImporter _wordListImporter;
-    private int _wordLength = 2;
-    int _lastIndex;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
+    public static GameManager Instance { get; private set; }
 
-        if (_wordListImporter)
+
+    private void Awake()
+    {
+        #region Singleton Pattern
+        if (Instance != null)
         {
-            _lastIndex = _wordListImporter.GetCustomLengthLastIndex(_wordLength);
+            Destroy(gameObject);
         }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        #endregion
 
     }
 
-    // Update is called once per frame
+
+    void Start()
+    {
+        
+    }
+
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (_wordListImporter)
-            {
-                int random = Random.Range(0, _wordListImporter.GetCustomLengthLastIndex(_wordLength));
-                Debug.Log(_wordListImporter.WordsList[random]._word);
-            }
-        }
+        
     }
 }

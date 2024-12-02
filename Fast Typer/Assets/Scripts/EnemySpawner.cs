@@ -1,16 +1,25 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private GameObject _enemy;
+    private float _spawnDelay = 5f;
+
     void Start()
     {
-        
+        StartCoroutine(EnemySpawnDelay());
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        
+
+    }
+
+    private IEnumerator EnemySpawnDelay()
+    {
+        yield return new WaitForSeconds(_spawnDelay);
+        _enemy = WordPoolManager.Instance.GetEnemyFromPool();
     }
 }

@@ -3,9 +3,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-public class WordListImporter : MonoBehaviour
+public class WordListManager : MonoBehaviour
 {
-    public static WordListImporter Instance { get; private set; }
+    public static WordListManager instance;
 
     StreamReader streamReader;
     private string _wordsPath = Application.dataPath + "/Source/kelimeler.txt";
@@ -15,6 +15,7 @@ public class WordListImporter : MonoBehaviour
 
     public struct WordData
     {
+
         public string _word;
         public int _wordLength;
 
@@ -27,13 +28,13 @@ public class WordListImporter : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null)
+        if (instance != null)
         {
             Destroy(gameObject);
         }
         else
         {
-            Instance = this;
+            instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
 
@@ -59,12 +60,20 @@ public class WordListImporter : MonoBehaviour
         }
     }
 
-    //private void Start()
-    //{
-    //    foreach (var word in _wordsList)
-    //    {
-    //        Debug.Log(word._word);
-    //    }
-    //}
+    public int GetCustomLengthLastIndex(int length)
+    {
+        int lastIndex = 0;
 
+        foreach (var data in _wordsList)
+        {
+            if (data._wordLength != length) { return lastIndex; }
+
+            if (_wordsList.IndexOf(data) >= lastIndex)
+            {
+                lastIndex = _wordsList.IndexOf(data);
+            }
+
+        }
+        return lastIndex;
+    }
 }
