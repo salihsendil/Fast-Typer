@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,8 +7,14 @@ public class WordPoolManager : MonoBehaviour
     private const int POOL_SIZE = 10;
 
     public static WordPoolManager Instance { get; private set; }
+
+    public event EventHandler OnGetEnemyFromPool;
+    public event EventHandler OnReturnEnemyToPool;
+
+
     [SerializeField] private GameObject _enemyPrefab;
     private Queue<GameObject> _enemyPool;
+
 
     private void Awake()
     {
@@ -22,7 +29,6 @@ public class WordPoolManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         #endregion
-
     }
 
     private void Start()
@@ -42,6 +48,7 @@ public class WordPoolManager : MonoBehaviour
         {
             GameObject _createdEnemy = _enemyPool.Dequeue();
             _createdEnemy.SetActive(true);
+            OnGetEnemyFromPool?.Invoke(_createdEnemy, EventArgs.Empty);
             return _createdEnemy;
         }
         return null;
@@ -51,5 +58,6 @@ public class WordPoolManager : MonoBehaviour
     {
         _enemyPool.Enqueue(enemy);
         enemy.SetActive(false);
+        OnReturnEnemyToPool?.Invoke(enemy, EventArgs.Empty);
     }
 }
