@@ -5,7 +5,8 @@ public class Enemy : MonoBehaviour
 {
     private TMP_Text _wordText;
     private Vector3 _targetPos;
-    private float _speed = 0.3f;
+    private Vector3 _newPos;
+    private float _speed = 0.5f;
 
     //Getters - Setters
     public string WordText { get => _wordText.text; }
@@ -14,22 +15,21 @@ public class Enemy : MonoBehaviour
     {
         _wordText = GetComponentInChildren<TMP_Text>();
         _targetPos = Player.Instance.transform.position;
-        //Debug.Log("Spawn Oldum");
     }
 
     private void OnDisable()
     {
-        //Debug.Log("havuza döndüm");
         Debug.Log(Time.deltaTime);
     }
 
     private void OnEnable()
     {
         _wordText.text = WordManager.Instance.GetRandomWord();
+        transform.position = EnemySpawner.Instance.GetRandomSpawnPoint();
+        Quaternion.LookRotation(_targetPos);
         _speed += Time.deltaTime;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 direction = (_targetPos - transform.position).normalized;

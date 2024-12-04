@@ -6,7 +6,7 @@ public class UIController : MonoBehaviour
     public static UIController Instance { get; private set; }
 
     private TMP_InputField _inputField;
-    private float _currentScore = 0;
+    private int _currentScore = 0;
     [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private TMP_Text _highScoreText;
 
@@ -32,6 +32,7 @@ public class UIController : MonoBehaviour
         _inputField.Select();
         _inputField.ActivateInputField();
         UpdateScore(_currentScore);
+        _highScoreText.text = "High Score: " + PlayerPrefs.GetInt("High Score");
 
     }
 
@@ -41,10 +42,15 @@ public class UIController : MonoBehaviour
 
     }
 
-    public void UpdateScore(float score)
+    public void UpdateScore(int score)
     {
         _currentScore = Mathf.Max(0, _currentScore + score);
         _scoreText.text = "Score: " + _currentScore.ToString();
+        if (_currentScore >= PlayerPrefs.GetInt("High Score", 0))
+        {
+            PlayerPrefs.SetInt("High Score", _currentScore);
+            _highScoreText.text = "High Score: " + PlayerPrefs.GetInt("High Score");
+        }
     }
 
 }

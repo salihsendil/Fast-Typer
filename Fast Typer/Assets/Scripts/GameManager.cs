@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,18 +7,19 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    private WordListImporter _wordListImporter;
 
-
-    private int _levelDifficulty = 2;
+    private float _levelDifficulty = 2;
     private int _wordScoreValue = 10;
     private bool _anyMatchedWord;
+    private float _increaseDelay = 0.25f;
 
     private int _currentEnemyCount;
     private Dictionary<GameObject, string> _currentWordDictionary;
 
     //Getters - Setters
-    public int LevelDifficulty { get => _levelDifficulty; }
-    
+    public float LevelDifficulty { get => _levelDifficulty; }
+
 
     private void Awake()
     {
@@ -38,11 +40,14 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         WordPoolManager.Instance.OnGetEnemyFromPool += UpdateCurrentEnemyCount;
+        _wordListImporter = WordListImporter.Instance;
         _currentWordDictionary = new Dictionary<GameObject, string>();
+        StartCoroutine(IncreaseGameDifficultyAndSpeed());
     }
 
     void Update()
     {
+        Debug.Log(_levelDifficulty);
     }
 
     private void UpdateCurrentEnemyCount(object sender, EventArgs e)
@@ -70,7 +75,7 @@ public class GameManager : MonoBehaviour
 
         if (!_anyMatchedWord)
         {
-            AddScore(inputText.Length * _wordScoreValue * -0.5f);
+            AddScore((int)(inputText.Length * _wordScoreValue * -0.5f));
 
             //add red screen to player feedback
 
@@ -78,9 +83,18 @@ public class GameManager : MonoBehaviour
         _anyMatchedWord = false;
     }
 
-    void AddScore(float score)
+    void AddScore(int score)
     {
         UIController.Instance.UpdateScore(score);
+    }
+
+    private IEnumerator IncreaseGameDifficultyAndSpeed()
+    {
+        while (_levelDifficulty < _wordListImporter.WordsList[_wordListImporter.WordsList.Count - 1]._wordLength)
+        {
+            _levelDifficulty += Time.deltaTime;
+            yield return new WaitForSeconds(_increaseDelay);
+        }
     }
 
 }
