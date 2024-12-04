@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     //Getters - Setters
     public int LevelDifficulty { get => _levelDifficulty; }
+    
 
     private void Awake()
     {

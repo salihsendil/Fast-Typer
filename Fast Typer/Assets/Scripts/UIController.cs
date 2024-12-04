@@ -43,15 +43,8 @@ public class UIController : MonoBehaviour
 
     public void UpdateScore(float score)
     {
-        if (_currentScore >= Mathf.Abs(score))
-        {
-            _currentScore += score;
-        }
-        else
-        {
-            _currentScore = 0;
-        }
-            _scoreText.text = "Score: " + _currentScore.ToString();
+        _currentScore = Mathf.Max(0, _currentScore + score);
+        _scoreText.text = "Score: " + _currentScore.ToString();
     }
 
 }
