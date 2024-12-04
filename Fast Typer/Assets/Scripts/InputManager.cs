@@ -28,6 +28,7 @@ public class InputManager : MonoBehaviour
         if (_inputField)
         {
             _inputField.onSubmit.AddListener(PlayerPressedEnter);
+            _inputField.onSubmit.AddListener(GameManager.Instance.CompareInputWithCurrentWord);
         }
     }
 

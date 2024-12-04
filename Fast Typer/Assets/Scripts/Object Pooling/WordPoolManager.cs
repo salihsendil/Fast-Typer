@@ -9,13 +9,15 @@ public class WordPoolManager : MonoBehaviour
     public static WordPoolManager Instance { get; private set; }
 
     public event EventHandler OnGetEnemyFromPool;
-    public event EventHandler OnReturnEnemyToPool;
 
 
     [SerializeField] private GameObject _enemyPrefab;
     private Queue<GameObject> _enemyPool;
 
 
+    //Getters - Setters
+    public Queue<GameObject> EnemyPool { get => _enemyPool; }
+    
     private void Awake()
     {
         #region SingletonPattern
@@ -58,6 +60,5 @@ public class WordPoolManager : MonoBehaviour
     {
         _enemyPool.Enqueue(enemy);
         enemy.SetActive(false);
-        OnReturnEnemyToPool?.Invoke(enemy, EventArgs.Empty);
     }
 }

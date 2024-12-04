@@ -21,16 +21,6 @@ public class WordManager : MonoBehaviour
 
     }
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
-    }
-
     public string GetRandomWord()
     {
         int random = Random.Range(0, GetLastIndexByWordLength());
@@ -45,7 +35,7 @@ public class WordManager : MonoBehaviour
 
         for (int index = 0; !_isLastIndexFound; index++)
         {
-            if (WordListImporter.Instance.WordsList[index]._wordLength <= GameManager.Instance.DifficultLevel)
+            if (WordListImporter.Instance.WordsList[index]._wordLength <= GameManager.Instance.LevelDifficulty)
             {
                 lastIndex = index;
             }

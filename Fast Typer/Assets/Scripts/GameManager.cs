@@ -8,13 +8,15 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
 
-    private int _difficultLevel = 2;
+    private int _levelDifficulty = 2;
+    private int _wordScoreValue = 10;
+    private bool _anyMatchedWord;
 
     private int _currentEnemyCount;
-    private List<string> _currentWordList;
+    private Dictionary<GameObject, string> _currentWordDictionary;
 
     //Getters - Setters
-    public int DifficultLevel { get => _difficultLevel; }
+    public int LevelDifficulty { get => _levelDifficulty; }
 
     private void Awake()
     {
@@ -34,43 +36,50 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        WordPoolManager.Instance.OnGetEnemyFromPool += GetCurrentEnemyCount;
-        WordPoolManager.Instance.OnReturnEnemyToPool += EnemyDestroyed;
-        _currentWordList = new List<string>();
+        WordPoolManager.Instance.OnGetEnemyFromPool += UpdateCurrentEnemyCount;
+        _currentWordDictionary = new Dictionary<GameObject, string>();
     }
 
     void Update()
     {
-        if (_currentWordList.Count > 0)
-        {
-            Debug.Log("word list index 0: " + _currentWordList[0]);
-        }
-        else
-        {
-            Debug.Log("empty list");
-        }
     }
 
-    private void GetCurrentEnemyCount(object sender, EventArgs e)
+    private void UpdateCurrentEnemyCount(object sender, EventArgs e)
     {
+        GameObject _enemy = sender as GameObject;
+        string _word = _enemy.GetComponentInChildren<TMP_Text>().text;
+        _currentWordDictionary.Add(_enemy, _word);
         _currentEnemyCount++;
-        GameObject _enemy = sender as GameObject;
-        string _word = _enemy.GetComponentInChildren<TMP_Text>().text;
-        _currentWordList.Add(_word);
     }
 
-    private void EnemyDestroyed(object sender, EventArgs e)
+    public void CompareInputWithCurrentWord(string inputText)
     {
-        GameObject _enemy = sender as GameObject;
-        string _word = _enemy.GetComponentInChildren<TMP_Text>().text;
-        for (int i = 0; i < _currentWordList.Count; i++)
+        foreach (var pair in _currentWordDictionary)
         {
-            if (_currentWordList[i].Equals(_word))
+            if (pair.Value.Equals(inputText))
             {
-                _currentWordList.Remove(_word);
-                _currentEnemyCount++;
+                _currentWordDictionary.Remove(pair.Key);
+                _currentEnemyCount--;
+                WordPoolManager.Instance.ReturnEnemyToPool(pair.Key);
+                AddScore(pair.Value.Length * _wordScoreValue);
+                _anyMatchedWord = true;
+                break;
             }
         }
+
+        if (!_anyMatchedWord)
+        {
+            AddScore(inputText.Length * _wordScoreValue * -0.5f);
+
+            //add red screen to player feedback
+
+        }
+        _anyMatchedWord = false;
+    }
+
+    void AddScore(float score)
+    {
+        UIController.Instance.UpdateScore(score);
     }
 
 }

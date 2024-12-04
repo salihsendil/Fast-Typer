@@ -29,7 +29,6 @@ public class EnemySpawner : MonoBehaviour
         //StartCoroutine(EnemyReturnDelay());
     }
 
-
     void Update()
     {
 
@@ -38,7 +37,11 @@ public class EnemySpawner : MonoBehaviour
     private IEnumerator EnemySpawnDelay()
     {
         yield return new WaitForSeconds(_spawnDelay);
-        _enemy = WordPoolManager.Instance.GetEnemyFromPool();
+        while (WordPoolManager.Instance.EnemyPool.Count > 0)
+        {
+            yield return new WaitForSeconds(_spawnDelay);
+            _enemy = WordPoolManager.Instance.GetEnemyFromPool();
+        }
     }
 
     //private IEnumerator EnemyReturnDelay()
